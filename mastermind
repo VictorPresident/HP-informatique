@@ -1,0 +1,127 @@
+from random import randint
+from copy import copy
+
+
+
+print("## MASTERMIND ##")
+
+liste_couleur = ['W', 'B', 'G', 'J', 'R', 'N']
+
+
+def code_secret(nb_position, nb_couleur) :
+    """
+    Fonction qui créé au hasard le code secret : 
+        
+    #Entrées : 
+        - nb_position : la taille du code secret voulu 
+        - nb_couleur : le nombre de couleurs disponibles pour faire le code 
+    """
+    code = []
+    for k in range(nb_position) : 
+        code.append(liste_couleur[randint(0, nb_couleur-1)])
+    return code 
+
+
+def proposition(nb_position) :
+    """
+    Fonction qui demande à l'utilisateur une proposition de code
+    
+    #Entrées : 
+        - nb_position : la taille du code à trouver 
+    """
+    prop = []
+    for k in range(1, nb_position+1) : 
+        print("Rappel de la liste des couleurs disponibles : ", liste_couleur[0:nb_couleur])
+        prop.append(input(f"Couleur n°= {k} : "))
+    return prop 
+
+def nombre_bien_places(code, prop) : 
+    """
+    Fonction qui renvoie le nombre de pionts de la bonne couleur et bien placés 
+    
+    #Entrées : 
+        - code : liste contenant le code secret
+        - prop : liste contenant la proposition faite par le joeur 
+    """
+    nb = 0
+    taille = len(code)
+    for k in range(taille) : 
+        if prop[k] == code[k] : 
+            nb += 1
+    return nb
+
+def position(couleur, prop):
+    """
+    
+
+    Parameters
+    ----------
+    couleur : 1 couleur
+    prop : proposition faite par le joueur
+
+    Returns
+    -------
+    l'indice de la couleur si elle est présente dans le code. 
+    -1 sinon
+
+    """
+    k = 0
+    while k < len(prop) and prop[k] != couleur :
+        k += 1
+    return (k if k < len(prop) else -1)
+
+def nombre_bonne_couleur(code, prop) : 
+    """
+    Fonction qui donne le nombre de pionts de la bonne couleur 
+    
+    #Entrées : 
+        - code : liste contenant le code secret
+        - prop : liste contenant la proposition faite par le joueur 
+    """
+    BIEN_PLACE = -1
+    MAL_PLACE = 0
+    nmp = 0
+    copie = copy(code)
+    for k in range(0, len(code)):
+        if copie[k] != BIEN_PLACE:
+            p = position(prop[k], copie)
+        if p != -1:
+            nmp += 1
+            copie[k] = MAL_PLACE
+    return nmp
+
+victoire = 0
+defaite = 0
+rejouer = 0
+compteur = 1
+    
+while rejouer!='non' : 
+    print(f"Partie n°={compteur} : ")
+    nb_essai = int(input("Combien d'essais voulez-vous ? "))
+    nb_position = int(input("Taille du code à deviner : "))
+    nb_couleur = int(input("Nombre de couleurs souhaité : "))
+    if nb_couleur > len(liste_couleur) : 
+        print("Déso, on a pas autant de couleurs...")
+        nb_couleur = int(input("Nombre de couleurs souhaité : "))
+    print("Voici donc la liste des couleurs disponibles : ", liste_couleur[0:nb_couleur])
+    prop = []
+    code = code_secret(nb_position, nb_couleur)
+    essai = 0
+    while prop != code and essai < nb_essai : 
+        essai += 1
+        prop = proposition(nb_position)
+        print("Vous venez de proposer la combinaison : ", prop)
+        print("CODE : ", code)
+        print("Nombre de pionts de la bonne couleur :", nombre_bonne_couleur(code, prop))
+        print("Nombre de pionts de la bonne couleur et bien placés : ", nombre_bien_places(code, prop))
+    if prop == code : 
+        print("Bravo t'as trouvé !")
+        victoire +=1
+    else : 
+        print("Déso, c'est perdu, le code à trouver était : ", code)
+        defaite += 1
+    print("Nombre de victoires : ", victoire)
+    print("Nombre de défaites : ", defaite)
+    rejouer = input("Voulez-vous rejouer ? (répondre par 'oui' ou par 'non') ")
+        
+    
